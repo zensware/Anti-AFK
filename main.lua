@@ -6,7 +6,8 @@ local statsLabel = Instance.new("TextLabel")
 local statusLabel = Instance.new("TextLabel")
 local creditsLabel = Instance.new("TextLabel")
 local closeButton = Instance.new("TextButton")
-local toggleButton = Instance.new("TextButton")
+local antiAfkButton = Instance.new("TextButton")
+local autoFarmButton = Instance.new("TextButton")
 
 local uiCornerMain = Instance.new("UICorner")
 local uiStrokeMain = Instance.new("UIStroke")
@@ -48,7 +49,7 @@ titleLabel.Parent = mainFrame
 titleLabel.BackgroundTransparency = 1
 titleLabel.Size = UDim2.new(1, -40, 0, 40)  -- Adjusted to make space for the close button
 titleLabel.Font = Enum.Font.GothamBold
-titleLabel.Text = "zensware.com | Anti-AFK"
+titleLabel.Text = "zensware.com | BBT"
 titleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
 titleLabel.TextSize = 24
 titleLabel.TextXAlignment = Enum.TextXAlignment.Left
@@ -105,19 +106,34 @@ uiStrokeClose.Parent = closeButton
 uiStrokeClose.Color = Color3.fromRGB(255, 87, 34)
 uiStrokeClose.Thickness = 2
 
--- Toggle button properties
-toggleButton.Parent = mainFrame
-toggleButton.BackgroundColor3 = Color3.fromRGB(76, 175, 80)
-toggleButton.Position = UDim2.new(0.5, -75, 1, -60)
-toggleButton.Size = UDim2.new(0, 150, 0, 40)
-toggleButton.Font = Enum.Font.GothamBold
-toggleButton.Text = "Activate"
-toggleButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-toggleButton.TextSize = 16
-toggleButton.BorderSizePixel = 0
+-- Anti-AFK toggle button properties
+antiAfkButton.Parent = mainFrame
+antiAfkButton.BackgroundColor3 = Color3.fromRGB(76, 175, 80)
+antiAfkButton.Position = UDim2.new(0.1, 0, 0.6, 0)
+antiAfkButton.Size = UDim2.new(0, 150, 0, 40)
+antiAfkButton.Font = Enum.Font.GothamBold
+antiAfkButton.Text = "Activate Anti-AFK"
+antiAfkButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+antiAfkButton.TextSize = 16
+antiAfkButton.BorderSizePixel = 0
 
--- Apply rounded corners to toggle button
-uiCornerToggle.Parent = toggleButton
+-- Apply rounded corners to anti-AFK button
+uiCornerToggle.Parent = antiAfkButton
+uiCornerToggle.CornerRadius = UDim.new(0, 10)
+
+-- Auto Farm toggle button properties
+autoFarmButton.Parent = mainFrame
+autoFarmButton.BackgroundColor3 = Color3.fromRGB(76, 175, 80)
+autoFarmButton.Position = UDim2.new(0.6, 0, 0.6, 0)
+autoFarmButton.Size = UDim2.new(0, 150, 0, 40)
+autoFarmButton.Font = Enum.Font.GothamBold
+autoFarmButton.Text = "Activate Auto Farm"
+autoFarmButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+autoFarmButton.TextSize = 16
+autoFarmButton.BorderSizePixel = 0
+
+-- Apply rounded corners to auto farm button
+uiCornerToggle.Parent = autoFarmButton
 uiCornerToggle.CornerRadius = UDim.new(0, 10)
 
 -- Close button functionality
@@ -149,19 +165,65 @@ spawn(function()
     end
 end)
 
--- Toggle button functionality
-toggleButton.MouseButton1Click:Connect(function()
+-- Toggle Anti-AFK functionality
+antiAfkButton.MouseButton1Click:Connect(function()
     antiAFKEnabled = not antiAFKEnabled
     if antiAFKEnabled then
-        toggleButton.Text = "Deactivate"
-        toggleButton.BackgroundColor3 = Color3.fromRGB(244, 67, 54)
+        antiAfkButton.Text = "Deactivate Anti-AFK"
+        antiAfkButton.BackgroundColor3 = Color3.fromRGB(244, 67, 54)
         statusLabel.Text = "Status: Active"
     else
-        toggleButton.Text = "Activate"
-        toggleButton.BackgroundColor3 = Color3.fromRGB(76, 175, 80)
+        antiAfkButton.Text = "Activate Anti-AFK"
+        antiAfkButton.BackgroundColor3 = Color3.fromRGB(76, 175, 80)
         statusLabel.Text = "Status: Inactive"
     end
 end)
 
--- Initialize toggle button color
-toggleButton.BackgroundColor3 = Color3.fromRGB(76, 175, 80)
+-- Auto Farm functionality
+local autoFarmEnabled = false
+
+local function autoFarm()
+    if autoFarmEnabled then
+        local players = game:GetService("Players")
+        local plr = players.LocalPlayer
+        local tween = game:GetService("TweenService")
+        game.Workspace.Gravity = 0.5 -- reduces glitchiness
+
+        local function main()
+            local humroot = plr.Character:WaitForChild("HumanoidRootPart")
+            local startTween = tween:Create(humroot, TweenInfo.new(4, Enum.EasingStyle.Linear, Enum.EasingDirection.Out, 0, false, 0), {CFrame = CFrame.new(-51.3946571, 67.3164978, 814.888123, -0.999501824, -0.00451373775, 0.0312365349, -8.62000427e-09, 0.989720345, 0.14301616, -0.0315609723, 0.142944917, -0.989227295)})
+            startTween:Play()
+            startTween.Completed:Wait()
+            local mainTween = tween:Create(humroot, TweenInfo.new(20.50, Enum.EasingStyle.Linear, Enum.EasingDirection.Out, 0, false, 0), {CFrame = CFrame.new(-77.0485153, 82.6013031, 8625.86719, -0.995574772, 0.022579968, -0.0912195817, -4.97565011e-09, 0.970703065, 0.240282282, 0.0939726979, 0.23921898, -0.966407478)})
+            mainTween:Play()
+            mainTween.Completed:Wait()
+            local endTween = tween:Create(humroot, TweenInfo.new(4, Enum.EasingStyle.Linear, Enum.EasingDirection.Out, 0, false, 0), {CFrame = game:GetService("Workspace").BoatStages.NormalStages.TheEnd.GoldenChest.Trigger.CFrame})
+            endTween:Play()
+            endTween.Completed:Wait()
+        end
+
+        main()
+
+        plr.CharacterAdded:Connect(function(char)
+            char:WaitForChild("HumanoidRootPart")
+            main()
+        end)
+    end
+end
+
+-- Toggle Auto Farm functionality
+autoFarmButton.MouseButton1Click:Connect(function()
+    autoFarmEnabled = not autoFarmEnabled
+    if autoFarmEnabled then
+        autoFarmButton.Text = "Deactivate Auto Farm"
+        autoFarmButton.BackgroundColor3 = Color3.fromRGB(244, 67, 54)
+        autoFarm()
+    else
+        autoFarmButton.Text = "Activate Auto Farm"
+        autoFarmButton.BackgroundColor3 = Color3.fromRGB(76, 175, 80)
+    end
+end)
+
+-- Initialize buttons color
+antiAfkButton.BackgroundColor3 = Color3.fromRGB(76, 175, 80)
+autoFarmButton.BackgroundColor3 = Color3.fromRGB(76, 175, 80)
